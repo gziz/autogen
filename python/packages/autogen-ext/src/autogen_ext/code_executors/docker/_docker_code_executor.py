@@ -336,7 +336,14 @@ $functions"""
             ) from e
 
         # Start a container from the image, read to exec commands later
-        client = docker.from_env()
+        try:
+            client = docker.from_env()
+        except Exception as e:
+            if "FileNotFoundError" in str(e):
+                raise RuntimeError(
+                    "Failed to connect to Docker daemon. Please make sure Docker is installed and running on your system."
+                ) from e
+            raise e
 
         # Check if the image exists
         try:
